@@ -1,0 +1,18 @@
+import knex from '../database/connection';
+import { Request, Response } from 'express';
+
+
+export default {
+	async index(req: Request, res: Response) {
+		const items = await knex('recyclables').select('*');
+
+		const serializedItems = items.map(item => {
+			return {
+				title: item.title,
+				image_url: `http://localhost:3333/uploads/${item.image}`
+			}
+		});
+
+		return res.json(serializedItems);
+	}
+}
