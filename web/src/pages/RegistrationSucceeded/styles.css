@@ -1,0 +1,16 @@
+#page-registration-succeeded {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	justify-content: center;
+
+	height: 100vh;
+
+	background: #2c2b2e;
+	color: #fff;
+}
+
+#page-registration-succeeded > span {
+	margin-top: 12px;
+	font-size: 24px;
+}
