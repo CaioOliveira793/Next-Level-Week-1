@@ -16,6 +16,7 @@ interface PointDetails {
 	point: {
 		id: number,
 		image: string,
+		image_url: string,
 		name: string,
 		email: string,
 		whatsapp: string,
@@ -72,7 +73,7 @@ const Detail: React.FC = () => {
 					<Feather name="arrow-left" color="#34cb79" size={20} />
 				</TouchableOpacity>
 
-				<Image style={styles.pointImage} source={{ uri: pointDetails.point.image }} />
+				<Image style={styles.pointImage} source={{ uri: pointDetails.point.image_url }} />
 
 				<Text style={styles.pointName}>{pointDetails.point.name}</Text>
 				<Text style={styles.pointItems}>

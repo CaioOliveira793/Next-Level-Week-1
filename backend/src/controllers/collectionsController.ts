@@ -11,12 +11,17 @@ export default {
 		if (!point)
 			return res.status(400).json({ message: 'Point not found' });
 
+		const serializedPoint = {
+			...point,
+			image_url: `http://192.168.0.11:3333/uploads/${point.image}`
+		};
+
 		const items = await knex('recyclables')
 			.join('collections_recyclables', 'recyclables.id', '=', 'collections_recyclables.recyclables_id')
 			.where('collections_recyclables.collections_id', id)
 			.column('recyclables.id', 'title');
 
-		return res.json({ point, items });
+		return res.json({ point: serializedPoint, items });
 	},
 
 	async index(req: Request, res: Response) {
@@ -35,8 +40,13 @@ export default {
 			})
 			.distinct()
 			.columns('collections.*');
+		
+		const serializedPoints = points.map(point => ({
+			...point,
+			image_url: `http://192.168.0.11:3333/uploads/${point.image}`
+		}));
 
-		return res.json(points);
+		return res.json(serializedPoints);
 	},
 
 	async create(req: Request, res: Response) {
@@ -61,17 +71,20 @@ export default {
 			longitude,
 			city,
 			uf,
-			image: 'https://images.unsplash.com/photo-1556767576-5ec41e3239ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80'
+			image: req.file.filename
 		}
 
 		const [insertedId] = await trx('collections').insert(collectPoint);
 
-		const pointItems = items.map((item_id: number) => {
-			return {
-				recyclables_id: item_id,
-				collections_id: insertedId
-			}
-		});
+		const pointItems = items
+			.split(',')
+			.map((item: string) => Number(item.trim()))
+			.map((item_id: number) => {
+				return {
+					recyclables_id: item_id,
+					collections_id: insertedId
+				}
+			});
 
 		await trx('collections_recyclables').insert(pointItems);
 
